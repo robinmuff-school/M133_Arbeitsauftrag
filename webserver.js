@@ -3,7 +3,7 @@ import { Application, Router, send } from "https://deno.land/x/oak@v6.3.1/mod.ts
 const app = new Application();
 const router = new Router();
 
-let tasks = [{Id: 0, Title: "LOL", Column: 0}];
+let tasks = [];
 
 router 
     .get("/", (context) => {
@@ -13,7 +13,7 @@ router
         const fileName = context.params.fileName;
         return send(context, "Frontend/" + fileName)
     })
-    
+
     .get("/Tasks", (context) => {
         context.response.body = tasks;
     })
@@ -49,5 +49,6 @@ router
         context.response.status = 200
         context.response.body = { message: 'OK' }
     })
+
 app.use(router.routes());
 app.listen({ port: 8000 });
