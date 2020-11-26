@@ -4,6 +4,16 @@ const app = new Application();
 const router = new Router();
 
 let tasks = [];
+const columns = [{
+    Title: "ToDo",
+    Color: "Orange"
+}, {
+    Title: "In Progress",
+    Color: "DodgerBlue"
+}, {
+    Title: "Done",
+    Color: "GreenYellow"
+}]
 
 router 
     .get("/", (context) => {
@@ -48,6 +58,10 @@ router
 
         context.response.status = 200
         context.response.body = { message: 'OK' }
+    })
+
+    .get("/Columns", (context) => {
+        context.response.body = columns;
     })
 
 app.use(router.routes());

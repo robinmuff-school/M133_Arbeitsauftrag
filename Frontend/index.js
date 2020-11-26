@@ -3,26 +3,66 @@ let dragedtaskid = "";
 loadPage();
 
 async function loadPage() {
-    let divs = ["ToDo_Content", "InProgress_Content", "Done_Content"];
-    for (i = 0; i < divs.length; i++) {
-        document.getElementById(divs[i]).innerHTML = "";
+    document.getElementById("Container").innerHTML = "";
+
+    let columns;
+    let tasks;
+
+    try {
+        let columns_response = await fetch("/Columns");
+        columns = await columns_response.json();
+        let tasks_response = await fetch("/Tasks");
+        tasks = await tasks_response.json();  
+    } catch(err) {
+        console.log(err);
+        return;
     }
 
-    const response = await fetch("/Tasks");
-    try {
-        const tasks = await response.json();
-
-        for (const task of tasks) {
-            document.getElementById(divs[task.Column]).appendChild(createTaskHTML(task.Id, task.Title));
+    for (i = 0; i < columns.length; i++) {
+        let div = document.createElement("div");
+        div.className = "column";
+        div.id = "Column_" + columns[i].Title.replace(" ", "");
+        div.style.height = "100vh";
+        div.style.width = (100 / columns.length).toFixed(1) + "%";
+        if (i % 2 == 1) {
+            div.style.backgroundColor = "WhiteSmoke";
         }
-    } catch {}
 
-    for (i = 0; i < divs.length; i++) {
+        let divtitle = document.createElement("div");
+        divtitle.className = "column_title";
+        divtitle.style.backgroundColor = columns[i].Color;
+        let title = document.createElement("label");
+        title.innerText = columns[i].Title;
+        divtitle.appendChild(title);
+
+        let divcontent = document.createElement("div");
+        divcontent.className = "column_content";
+        divcontent.id = "Column_Content_" + i;
+        divcontent.style.height = "100vh";
+        divcontent.ondrop = drop;
+        divcontent.ondragover = allowDrop;
+
+        div.appendChild(divtitle);
+        div.appendChild(divcontent);
+
+        document.getElementById("Container").appendChild(div);
+    }
+
+    for (const task of tasks) {
+        console.log(columns)
+        console.log(task.Column);
+        document.getElementById("Column_" + columns[task.Column].Title.replace(" ", "")).lastChild.appendChild(createTaskHTML(task.Id, task.Title));
+    }
+
+    for (i = 0; i < columns.length; i++) {
         let button = document.createElement("button");
         button.innerText = "+";
         button.id = "Button_NewTask_" + i;
+        button.className = "button_addtask";
+        button.style.width = "100%";
+        button.style.height = "3%"
         button.addEventListener("click", newTask);
-        document.getElementById(divs[i]).appendChild(button);
+        document.getElementById("Column_" + columns[i].Title.replace(" ", "")).lastChild.appendChild(button);
     }
 
     document.getElementById("Button_Create").addEventListener("click", addTask);
@@ -81,19 +121,22 @@ function createTaskHTML(id, title) {
     p.innerText = title;
     
     let back = document.createElement("button");
+    back.className = "button_tasks";
     back.id = "Button_Back_Task_" + id;
     back.addEventListener("click", editTask)
-    back.innerText = "Back";
+    back.innerText = "←";
     
     let del = document.createElement("button");
+    del.className = "button_tasks";
     del.id = "Button_Delete_Task_" + id;
     del.addEventListener("click", deleteTask);
-    del.innerText = "Delete";
+    del.innerText = "🗑";
     
     let forward = document.createElement("button");
+    forward.className = "button_tasks";
     forward.id = "Button_Forward_Task_" + id;
     forward.addEventListener("click", editTask)
-    forward.innerText = "Forward";
+    forward.innerText = "→";
 
     div.appendChild(p);
     div.appendChild(back);
@@ -157,7 +200,7 @@ function drag(ev) {
 async function drop(ev) {
     ev.preventDefault();
     let task;
-    let column = ev.path[0].id;
+    let column = ev.path[0].id.slice(-1);
 
     const response = await fetch("/Tasks");
     let tasks = await response.json();
@@ -168,15 +211,7 @@ async function drop(ev) {
         }
     );
 
-    if (column.includes("ToDo")) {
-        task.Column = 0;
-    }
-    if (column.includes("InProgress")) {
-        task.Column = 1;
-    }
-    if (column.includes("Done")) {
-        task.Column = 2;
-    }
+    task.Column = column;
 
     await fetch(
         "/Tasks:" + dragedtaskid,

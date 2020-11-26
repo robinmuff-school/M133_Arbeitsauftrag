@@ -1,38 +1,52 @@
 /*Order*/
-.Container {
+.container {
     display: flex;
 }
   
-.Container > div {
-    width: 33.3%;
+.container > div {
     font-size: 25px;
     text-align: center;
-    vertical-align: middle;
-    margin: 5px;
 }
 
-/*Top*/
-.ToDo_Title {
-    background-color: orange;
-}
-  
-.InProgress_Title {
-    background-color: lightblue;
-}
-  
-.Done_Title {
-    background-color: greenyellow;
+body {
+    margin: 0px;
 }
 
 /*Task*/
-.Task {
+.task {
     border-style: solid;
     margin: 10px;
+    border-radius: 15px;
+}
+.button_tasks, .button_addtask {
+    background-color:rgba(255, 255, 255, 0);
+    border: grey;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 5px;
+    font-size: 20px;
+}
+
+.button_create {
+    background-color:rgba(200, 200, 200, 0.5);
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    font-size: 20px;
+}
+
+.button_tasks:hover, .button_addtask:hover {
+    background-color: rgb(240, 240, 240);
+}
+
+.column_title {
+    padding: 10px;
 }
 
 
 /*Task Popup*/
-.Popup {
+.popup {
     display: none;
     position: fixed;
     z-index: 1;
@@ -46,12 +60,18 @@
     background-color: rgba(0,0,0,0.4);
 }
   
-.Popup_Content {
+.popup_content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 50%;
+    text-align: center;
+}
+
+#Input_Title {
+    margin: 10px;
+    height: 30px;
 }
  
 .close {
@@ -62,8 +82,4 @@
 }
 .close:hover, .close:focus {
     cursor: pointer;
-}
-
-.Content  {
-    height: 50px;
 }
