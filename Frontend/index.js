@@ -49,8 +49,6 @@ async function loadPage() {
     }
 
     for (const task of tasks) {
-        console.log(columns)
-        console.log(task.Column);
         document.getElementById("Column_" + columns[task.Column].Title.replace(" ", "")).lastChild.appendChild(createTaskHTML(task.Id, task.Title));
     }
 
@@ -75,6 +73,7 @@ async function loadPage() {
 function newTask(button) {
     column = button.path[0].id.slice(-1);
     document.getElementById("Popup").style.display = "block";
+    document.getElementById("Input_Title").focus();
 }
 
 async function addTask() {
