@@ -199,7 +199,25 @@ function drag(ev) {
 async function drop(ev) {
     ev.preventDefault();
     let task;
-    let column = ev.path[0].id.slice(-1);
+    let column;
+    let columns;
+
+    try {
+        let columns_response = await fetch("/Columns");
+        columns = await columns_response.json();
+    } catch(err) {
+        console.log(err);
+        return;
+    }
+
+    for (let i = 0; i < ev.path.length; i++) {
+        for (let y = 0; y < columns.length; y++) {
+            if (ev.path[i].id == "Column_" + columns[y].Title.replace(" ", "")) {
+                console.log(y)
+                column = y;
+            }
+        }
+    }
 
     const response = await fetch("/Tasks");
     let tasks = await response.json();
